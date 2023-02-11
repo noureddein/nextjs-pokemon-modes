@@ -10,21 +10,22 @@ import styles from "../styles/Home.module.css";
 
 const POKEMON_BASE_URL = "https://jherr-pokemon.s3.us-west-1.amazonaws.com";
 
-export default function Home() {
-    const [pokemon, setPokemon] = useState([]);
+export async function getServerSideProps(){
+    let res = []
+    try {
+        res = await fetch(`${POKEMON_BASE_URL}/index.json`);
+    } catch (error) {
+        console.error("Cannot fetch pokemon!", error);
+    }
 
-    useEffect(() => {
-        async function getPokemon() {
-            try {
-                const res = await fetch(`${POKEMON_BASE_URL}/index.json`);
-                setPokemon(await res.json());
-            } catch (error) {
-                console.error("Cannot fetch pokemon!", error);
-            }
+    return {
+        props: {
+            pokemon: await res.json()
         }
+    }
+}
 
-        getPokemon();
-    }, []);
+export default function Home({pokemon}) {
 
     return (
         <>
