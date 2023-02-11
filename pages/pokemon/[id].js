@@ -7,8 +7,27 @@ import styles from "../../styles/Details.module.css";
 
 const POKEMON_BASE_URL = "https://jherr-pokemon.s3.us-west-1.amazonaws.com";
 
-export async function getServerSideProps({params}){
-    let res = []
+export async function getStaticPaths({ params }) {
+    let res = [];
+    try {
+        res = await fetch(`${POKEMON_BASE_URL}/index.json`);
+        res = await res.json();
+    } catch (error) {
+        console.error("Cannot fetch pokemon!", error);
+    }
+
+    return {
+        paths: res.map(({ id }) => ({
+            params: {
+                id: id.toString(),
+            },
+        })),
+        fallback: false,
+    };
+}
+
+export async function getStaticProps({ params }) {
+    let res = [];
     try {
         res = await fetch(`${POKEMON_BASE_URL}/pokemon/${params.id}.json`);
     } catch (error) {
@@ -17,12 +36,12 @@ export async function getServerSideProps({params}){
 
     return {
         props: {
-            pokemon: await res.json()
-        }
-    }
+            pokemon: await res.json(),
+        },
+    };
 }
 
-export default function Details({pokemon}) {
+export default function Details({ pokemon }) {
     const { name, image, type, stats } = pokemon;
 
     return (

@@ -10,7 +10,7 @@ import styles from "../styles/Home.module.css";
 
 const POKEMON_BASE_URL = "https://jherr-pokemon.s3.us-west-1.amazonaws.com";
 
-export async function getServerSideProps(){
+export async function getStaticProps(){
     let res = []
     try {
         res = await fetch(`${POKEMON_BASE_URL}/index.json`);
